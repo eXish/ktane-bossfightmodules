@@ -200,11 +200,11 @@ public class BossfightPowScript : MonoBehaviour {
                 {
                     if (backSel == 0 && clockSel == 0)
                     {
-                        pressAmt = 2;
+                        pressAmt = 4;
                     }
                     else if (backSel == 1 && clockSel == 0)
                     {
-                        pressAmt = 4;
+                        pressAmt = 2;
                     }
                     else if (backSel == 0 && clockSel == 1)
                     {
