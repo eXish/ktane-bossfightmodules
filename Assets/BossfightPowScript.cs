@@ -268,7 +268,7 @@ public class BossfightPowScript : MonoBehaviour {
             if (pinks.Contains(pressed))
             {
                 pressed.AddInteractionPunch();
-                if (pressCt != pressAmt && !haveToGrey)
+                if ((pressCt != pressAmt && !haveToGrey) || solving)
                 {
                     audio.PlaySoundAtTransform("POWBREAK", pressed.transform);
                     pressCt++;
@@ -296,12 +296,12 @@ public class BossfightPowScript : MonoBehaviour {
             else if (grays.Contains(pressed))
             {
                 pressed.AddInteractionPunch();
-                if (pinkExists() && !haveToGrey)
+                if ((pinkExists() && !haveToGrey) && !solving)
                 {
                     GetComponent<KMBombModule>().HandleStrike();
                     Debug.LogFormat("[Pow #{0}] You tried to destroy the grey layer of piece {1}, which is not ok since you have not destroyed all pink layers yet! Strike!", moduleId, Array.IndexOf(grays, pressed) + 1);
                 }
-                else if (pressCt != pressAmt)
+                else if ((pressCt != pressAmt) || solving)
                 {
                     audio.PlaySoundAtTransform("POWBREAK", pressed.transform);
                     pressCt++;
@@ -941,8 +941,8 @@ public class BossfightPowScript : MonoBehaviour {
     // Deals with starting the TP force solve
     void TwitchHandleForcedSolve()
     {
-        StartCoroutine(SolveHandler());
         solving = true;
+        StartCoroutine(SolveHandler());
     }
 
     // Actually deals with the TP force solve
@@ -964,7 +964,7 @@ public class BossfightPowScript : MonoBehaviour {
                 }
                 yield return new WaitForSeconds(0.1f);
             }
-            int start = pressCt;
+            /**int start = pressCt;
             for (int i = start; i < pressAmt; i++)
             {
                 List<int> unpressed = new List<int>();
@@ -990,6 +990,19 @@ public class BossfightPowScript : MonoBehaviour {
                         }
                     }
                     grays[unpressed[UnityEngine.Random.Range(0, unpressed.Count())]].OnInteract();
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }*/
+            if (!moduleSolved)
+            {
+                for (int j = 0; j < sets.Length; j++)
+                {
+                    pinks[j].OnInteract();
+                    yield return new WaitForSeconds(0.1f);
+                }
+                for (int j = 0; j < sets.Length; j++)
+                {
+                    grays[j].OnInteract();
                     yield return new WaitForSeconds(0.1f);
                 }
             }
