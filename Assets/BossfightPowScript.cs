@@ -827,7 +827,7 @@ public class BossfightPowScript : MonoBehaviour {
 
     // Deals with TP command handling
     #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in attack mode] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in attack mode] | Valid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | Attack mode has extra time between attacks on TP";
+    private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in an attack phase] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in an attack phase] | Valid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | The attack phase has extra time between attacks on TP";
     #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
@@ -837,7 +837,7 @@ public class BossfightPowScript : MonoBehaviour {
             yield return null;
             if (!attacking)
             {
-                yield return "sendtochaterror The boss is not currently in attack mode!";
+                yield return "sendtochaterror The boss is not currently in an attack phase!";
                 yield break;
             }
             if (parameters.Length > 2)
@@ -887,7 +887,7 @@ public class BossfightPowScript : MonoBehaviour {
                     }
                     else if (!pinkObjs[temp - 1].activeSelf && !grayObjs[temp - 1].activeSelf)
                     {
-                        yield return "sendtochaterror This set of pieces cannot be pressed due to piece '" + parameters[i] + "' not having any layers left or the boss being in attack mode!";
+                        yield return "sendtochaterror This set of pieces cannot be pressed due to piece '" + parameters[i] + "' not having any layers left or the boss being in an attack phase!";
                         yield break;
                     }
                 }
@@ -925,7 +925,7 @@ public class BossfightPowScript : MonoBehaviour {
                     }
                     else
                     {
-                        yield return "sendtochaterror This piece cannot be pressed due to not having any layers left or the boss being in attack mode!";
+                        yield return "sendtochaterror This piece cannot be pressed due to not having any layers left or the boss being in an attack phase!";
                     }
                 }
                 else
