@@ -49,6 +49,7 @@ public class BossfightPowScript : MonoBehaviour {
     private int pressAmt = -1;
     private int storedMins = -1;
     private bool haveToGrey = false;
+    private bool firstPunch = false;
 
     private int backSel = -1;
     private int clockSel = -1;
@@ -271,6 +272,8 @@ public class BossfightPowScript : MonoBehaviour {
                 if ((pressCt != pressAmt && !haveToGrey) || solving)
                 {
                     audio.PlaySoundAtTransform("POWBREAK", pressed.transform);
+                    if (!firstPunch)
+                        firstPunch = true;
                     pressCt++;
                     pinkPresses[Array.IndexOf(pinks, pressed)] = true;
                     pinkObjs[Array.IndexOf(pinks, pressed)].SetActive(false);
@@ -590,7 +593,7 @@ public class BossfightPowScript : MonoBehaviour {
         float offset = getFloat(set);
         if (clockSel == 0)
             offset = -offset;
-        while (ct < randomTime)
+        while (ct < randomTime || !firstPunch)
         {
             Vector3 newPos = new Vector3(Mathf.Sin(Time.time * circleSpeeds[set] - offset) * circleSizes[set], 0.03f, Mathf.Cos(Time.time * circleSpeeds[set] - offset) * circleSizes[set]);
             sets[set].transform.localPosition = newPos;
