@@ -825,6 +825,7 @@ public class BossfightPowScript : MonoBehaviour {
     bool TwitchPlaysActive;
     bool solving = false;
 
+    /**
     // Deals with TP command handling
     #pragma warning disable 414
     private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in an attack phase] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in an attack phase] | Valid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | The attack phase has extra time between attacks on TP";
@@ -967,7 +968,7 @@ public class BossfightPowScript : MonoBehaviour {
                 }
                 yield return new WaitForSeconds(0.1f);
             }
-            /**int start = pressCt;
+            int start = pressCt;
             for (int i = start; i < pressAmt; i++)
             {
                 List<int> unpressed = new List<int>();
@@ -995,7 +996,7 @@ public class BossfightPowScript : MonoBehaviour {
                     grays[unpressed[UnityEngine.Random.Range(0, unpressed.Count())]].OnInteract();
                     yield return new WaitForSeconds(0.1f);
                 }
-            }*/
+            }
             if (!moduleSolved)
             {
                 for (int j = 0; j < sets.Length; j++)
@@ -1024,5 +1025,5 @@ public class BossfightPowScript : MonoBehaviour {
             }
         }
         return false;
-    }
+    }*/
 }
