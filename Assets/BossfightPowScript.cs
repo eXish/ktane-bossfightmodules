@@ -258,7 +258,10 @@ public class BossfightPowScript : MonoBehaviour
         {
             twitchMode = true;
             GameObject tpAPIGameObject = GameObject.Find("TwitchPlays_Info");
-            tpAPI = tpAPIGameObject.GetComponent<IDictionary<string, object>>();
+            if (tpAPIGameObject != null)
+                tpAPI = tpAPIGameObject.GetComponent<IDictionary<string, object>>();
+            else
+                twitchMode = false;
         }
         if (bossID == 1)
         {
