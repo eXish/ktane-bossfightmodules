@@ -654,7 +654,7 @@ public class BossfightPowScript : MonoBehaviour
         pivotpos = UnityEngine.Random.Range(0, 3);
         if (twitchMode && !solving)
         {
-            tpAPI["ircConnectionSendMessage"] = "Pow (Module " + GetModuleCode() + ") has entered an attack phase! The green LED is LED " + (pivotpos + 1) + "!";
+            tpAPI["ircConnectionSendMessage"] = "Module " + GetModuleCode() + " (Pow) has entered an attack phase! The green LED is LED " + (pivotpos + 1) + "!";
         }
         for (int i = 0; i < 3; i++)
         {
@@ -709,7 +709,7 @@ public class BossfightPowScript : MonoBehaviour
                 crossImg.SetActive(true);
                 if (twitchMode && !solving)
                 {
-                    tpAPI["ircConnectionSendMessage"] = "LED " + (nextPivot + 1) + " is about to be attacked on Pow (Module " + GetModuleCode() + ")!";
+                    tpAPI["ircConnectionSendMessage"] = "LED " + (nextPivot + 1) + " is about to be attacked on Module " + GetModuleCode() + " (Pow)!";
                     yield return new WaitForSeconds(7f);
                 }
                 audio.PlaySoundAtTransform("POWATTACK", transform);
@@ -747,7 +747,7 @@ public class BossfightPowScript : MonoBehaviour
         audio.PlaySoundAtTransform("POWTRANSITION", transform);
         if (twitchMode && !solving)
         {
-            tpAPI["ircConnectionSendMessage"] = "Pow (Module " + GetModuleCode() + ") has exited the attack phase!";
+            tpAPI["ircConnectionSendMessage"] = "Module " + GetModuleCode() + " (Pow) has exited the attack phase!";
         }
         t = 0f;
         while (!allInitial() && t < 2f)
@@ -841,9 +841,9 @@ public class BossfightPowScript : MonoBehaviour
     bool solving = false;
 
     // Deals with TP command handling
-#pragma warning disable 414
+    #pragma warning disable 414
     private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in an attack phase] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in an attack phase] | Valid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | On TP the module will announce in chat when the boss enters an attack phase and which LED it will attack next | Time between attacks in an attack phase are slightly longer on TP";
-#pragma warning restore 414
+    #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
         string[] parameters = command.Split(' ');
