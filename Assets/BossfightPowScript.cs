@@ -6,7 +6,8 @@ using KModkit;
 using System.Text.RegularExpressions;
 using System;
 
-public class BossfightPowScript : MonoBehaviour {
+public class BossfightPowScript : MonoBehaviour
+{
 
     public KMAudio audio;
     public KMBombInfo bomb;
@@ -31,6 +32,8 @@ public class BossfightPowScript : MonoBehaviour {
     public Transform[] grayCubesTrans;
     public Transform[] fakeGrayCubesTrans;
     public GameObject crossImg;
+
+    private IDictionary<string, object> tpAPI;
 
     private Vector3[] introPos = new Vector3[] { new Vector3(-0.07f, 0.03f, 0.03f), new Vector3(-0.03f, 0.03f, 0.07f), new Vector3(0.03f, 0.03f, 0.07f), new Vector3(0.07f, 0.03f, 0.03f), new Vector3(0.07f, 0.03f, -0.03f), new Vector3(0.03f, 0.03f, -0.07f), new Vector3(-0.03f, 0.03f, -0.07f), new Vector3(-0.07f, 0.03f, -0.03f), new Vector3(-0.07f, 0.03f, 0.03f) };
     private Vector3[] attackPos = new Vector3[] { new Vector3(-0.065f, 0.03f, 0.05f), new Vector3(-0.0325f, 0.03f, 0.05f), new Vector3(0f, 0.03f, 0.05f), new Vector3(0.0325f, 0.03f, 0.05f), new Vector3(0.065f, 0.03f, 0.05f), new Vector3(-0.065f, 0.03f, 0f), new Vector3(-0.0325f, 0.03f, 0f), new Vector3(0f, 0.03f, 0f), new Vector3(0.0325f, 0.03f, 0f), new Vector3(0.065f, 0.03f, 0f) };
@@ -96,7 +99,8 @@ public class BossfightPowScript : MonoBehaviour {
         bomb.OnBombExploded += delegate () { bossCount = 1; if (bossID == 1) music.Stop(); };
     }
 
-    void Start () {
+    void Start()
+    {
         for (int i = 0; i < sets.Length; i++)
         {
             grayObjs[i].SetActive(false);
@@ -253,6 +257,8 @@ public class BossfightPowScript : MonoBehaviour {
         if (TwitchPlaysActive)
         {
             twitchMode = true;
+            GameObject tpAPIGameObject = GameObject.Find("TwitchPlays_Info");
+            tpAPI = tpAPIGameObject.GetComponent<IDictionary<string, object>>();
         }
         if (bossID == 1)
         {
@@ -269,7 +275,7 @@ public class BossfightPowScript : MonoBehaviour {
             if (pinks.Contains(pressed))
             {
                 pressed.AddInteractionPunch();
-                if ((pressCt != pressAmt && !haveToGrey) || solving)
+                if (pressCt != pressAmt && !haveToGrey)
                 {
                     audio.PlaySoundAtTransform("POWBREAK", pressed.transform);
                     if (!firstPunch)
@@ -299,12 +305,12 @@ public class BossfightPowScript : MonoBehaviour {
             else if (grays.Contains(pressed))
             {
                 pressed.AddInteractionPunch();
-                if ((pinkExists() && !haveToGrey) && !solving)
+                if (pinkExists() && !haveToGrey)
                 {
                     GetComponent<KMBombModule>().HandleStrike();
                     Debug.LogFormat("[Pow #{0}] You tried to destroy the grey layer of piece {1}, which is not ok since you have not destroyed all pink layers yet! Strike!", moduleId, Array.IndexOf(grays, pressed) + 1);
                 }
-                else if ((pressCt != pressAmt) || solving)
+                else if (pressCt != pressAmt)
                 {
                     audio.PlaySoundAtTransform("POWBREAK", pressed.transform);
                     pressCt++;
@@ -553,7 +559,7 @@ public class BossfightPowScript : MonoBehaviour {
             pinkCubesTrans[cube].Rotate(2f, 0.0f, 0.0f, Space.Self);
             rotation++;
         }
-        yield return new WaitForSecondsRealtime(0.1f);
+        yield return new WaitForSeconds(0.1f);
         StartCoroutine(rotPCube(cube));
     }
 
@@ -568,7 +574,7 @@ public class BossfightPowScript : MonoBehaviour {
             fakeGrayCubesTrans[cube].Rotate(-2f, 0.0f, 0.0f, Space.Self);
             rotation++;
         }
-        yield return new WaitForSecondsRealtime(0.1f);
+        yield return new WaitForSeconds(0.1f);
         StartCoroutine(rotGCube(cube));
     }
 
@@ -582,7 +588,7 @@ public class BossfightPowScript : MonoBehaviour {
             crystalOuterRotators[cube].transform.Rotate(0.0f, 0.0f, -1f, Space.Self);
             rotation++;
         }
-        yield return new WaitForSecondsRealtime(0.1f);
+        yield return new WaitForSeconds(0.1f);
         crystalCoroutines[cube] = StartCoroutine(rotCrystal(cube));
     }
 
@@ -646,6 +652,10 @@ public class BossfightPowScript : MonoBehaviour {
         attacking = true;
         audio.PlaySoundAtTransform("POWTRANSITION", transform);
         pivotpos = UnityEngine.Random.Range(0, 3);
+        if (twitchMode && !solving)
+        {
+            tpAPI["ircConnectionSendMessage"] = "Pow (Module " + GetModuleCode() + ") has entered an attack phase! The green LED is LED " + (pivotpos + 1) + "!";
+        }
         for (int i = 0; i < 3; i++)
         {
             if (pivotpos == i)
@@ -699,6 +709,7 @@ public class BossfightPowScript : MonoBehaviour {
                 crossImg.SetActive(true);
                 if (twitchMode && !solving)
                 {
+                    tpAPI["ircConnectionSendMessage"] = "LED " + (nextPivot + 1) + " is about to be attacked on Pow (Module " + GetModuleCode() + ")!";
                     yield return new WaitForSeconds(7f);
                 }
                 audio.PlaySoundAtTransform("POWATTACK", transform);
@@ -734,6 +745,10 @@ public class BossfightPowScript : MonoBehaviour {
         crossImg.SetActive(false);
         nextPivot = -1;
         audio.PlaySoundAtTransform("POWTRANSITION", transform);
+        if (twitchMode && !solving)
+        {
+            tpAPI["ircConnectionSendMessage"] = "Pow (Module " + GetModuleCode() + ") has exited the attack phase!";
+        }
         t = 0f;
         while (!allInitial() && t < 2f)
         {
@@ -825,11 +840,10 @@ public class BossfightPowScript : MonoBehaviour {
     bool TwitchPlaysActive;
     bool solving = false;
 
-    /**
     // Deals with TP command handling
-    #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in an attack phase] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in an attack phase] | Valid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | The attack phase has extra time between attacks on TP";
-    #pragma warning restore 414
+#pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in an attack phase] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in an attack phase] | Valid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | On TP the module will announce in chat when the boss enters an attack phase and which LED it will attack next | Time between attacks in an attack phase are slightly longer on TP";
+#pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
         string[] parameters = command.Split(' ');
@@ -997,19 +1011,6 @@ public class BossfightPowScript : MonoBehaviour {
                     yield return new WaitForSeconds(0.1f);
                 }
             }
-            if (!moduleSolved)
-            {
-                for (int j = 0; j < sets.Length; j++)
-                {
-                    pinks[j].OnInteract();
-                    yield return new WaitForSeconds(0.1f);
-                }
-                for (int j = 0; j < sets.Length; j++)
-                {
-                    grays[j].OnInteract();
-                    yield return new WaitForSeconds(0.1f);
-                }
-            }
             yield return null;
         }
     }
@@ -1025,5 +1026,23 @@ public class BossfightPowScript : MonoBehaviour {
             }
         }
         return false;
-    }*/
+    }
+
+    // Gets the Twitch Plays ID for the module
+    private string GetModuleCode()
+    {
+        Transform closest = null;
+        float closestDistance = float.MaxValue;
+        foreach (Transform children in transform.parent)
+        {
+            var distance = (transform.position - children.position).magnitude;
+            if (children.gameObject.name == "TwitchModule(Clone)" && (closest == null || distance < closestDistance))
+            {
+                closest = children;
+                closestDistance = distance;
+            }
+        }
+
+        return closest != null ? closest.Find("MultiDeckerUI").Find("IDText").GetComponent<UnityEngine.UI.Text>().text : null;
+    }
 }
