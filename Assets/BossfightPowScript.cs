@@ -26,6 +26,7 @@ public class BossfightPowScript : MonoBehaviour
     public GameObject[] crystalRotators;
     public GameObject[] crystalOuterRotators;
     public GameObject[] finishedObjs;
+    public Light[] finishedObjsLights;
     public GameObject[] pivots;
     public Material[] pivotcols;
     public Transform[] pinkCubesTrans;
@@ -80,6 +81,11 @@ public class BossfightPowScript : MonoBehaviour
         bossID = bossCount++;
         moduleId = moduleIdCounter++;
         moduleSolved = false;
+        float scalar = transform.lossyScale.x;
+        foreach (Light l in finishedObjsLights)
+        {
+            l.range *= scalar;
+        }
         foreach (KMSelectable obj in pinks)
         {
             KMSelectable pressed = obj;
