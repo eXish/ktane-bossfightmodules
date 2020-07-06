@@ -152,62 +152,32 @@ public class BossfightPowScript : MonoBehaviour
         {
             music.Stop();
         }
-        if (!pinkExists() && notAnnounced2)
+        if (!moduleSolved)
         {
-            notAnnounced2 = false;
-            if (pressAmt != 1)
+            if (!pinkExists() && notAnnounced2)
             {
-                pressAmt = 20;
-                Debug.LogFormat("[Pow #{0}] There is no longer any pink layers of pieces! Can destroy grey layers of pieces with no restriction!", moduleId);
-            }
-            else
-            {
-                Debug.LogFormat("[Pow #{0}] There is no longer any pink layers of pieces, but minutes remaining is still a multiple of 5!", moduleId);
-            }
-        }
-        if (storedMins != ((int)bomb.GetTime() / 60))
-        {
-            storedMins = (int)bomb.GetTime() / 60;
-            Debug.LogFormat("[Pow #{0}] Currently {1} minutes remaining!", moduleId, storedMins);
-            if (storedMins % 5 == 0 && storedMins != 0)
-            {
-                notAnnounced = true;
-                pressAmt = 1;
-                Debug.LogFormat("[Pow #{0}] Minutes remaining is a multiple of 5! Destruction limit set to 1!", moduleId);
-            }
-            if (storedMins % 3 == 0 && storedMins != 0)
-            {
-                if (backSel == 0 && clockSel == 0)
-                {
-                    pressAmt = 4;
-                }
-                else if (backSel == 1 && clockSel == 0)
-                {
-                    pressAmt = 2;
-                }
-                else if (backSel == 0 && clockSel == 1)
-                {
-                    pressAmt = 2;
-                }
-                else if (backSel == 1 && clockSel == 1)
-                {
-                    pressAmt = 3;
-                }
-                haveToGrey = true;
-                Debug.LogFormat("[Pow #{0}] Minutes remaining is a multiple of 3! Can only destroy grey layers of pieces!", moduleId);
-            }
-            if (storedMins % 5 != 0)
-            {
-                if (!pinkExists())
+                notAnnounced2 = false;
+                if (pressAmt != 1)
                 {
                     pressAmt = 20;
-                    if (notAnnounced)
-                    {
-                        notAnnounced = false;
-                        Debug.LogFormat("[Pow #{0}] Minutes remaining is no longer a multiple of 5 and all pink layers of pieces are destroyed! Can destroy grey layers of pieces with no restriction!", moduleId);
-                    }
+                    Debug.LogFormat("[Pow #{0}] There is no longer any pink layers of pieces! Can destroy grey layers of pieces with no restriction!", moduleId);
                 }
                 else
+                {
+                    Debug.LogFormat("[Pow #{0}] There is no longer any pink layers of pieces, but minutes remaining is still a multiple of 5!", moduleId);
+                }
+            }
+            if (storedMins != ((int)bomb.GetTime() / 60))
+            {
+                storedMins = (int)bomb.GetTime() / 60;
+                Debug.LogFormat("[Pow #{0}] Currently {1} minutes remaining!", moduleId, storedMins);
+                if (storedMins % 5 == 0 && storedMins != 0)
+                {
+                    notAnnounced = true;
+                    pressAmt = 1;
+                    Debug.LogFormat("[Pow #{0}] Minutes remaining is a multiple of 5! Destruction limit set to 1!", moduleId);
+                }
+                if (storedMins % 3 == 0 && storedMins != 0)
                 {
                     if (backSel == 0 && clockSel == 0)
                     {
@@ -225,35 +195,68 @@ public class BossfightPowScript : MonoBehaviour
                     {
                         pressAmt = 3;
                     }
+                    haveToGrey = true;
+                    Debug.LogFormat("[Pow #{0}] Minutes remaining is a multiple of 3! Can only destroy grey layers of pieces!", moduleId);
+                }
+                if (storedMins % 5 != 0)
+                {
+                    if (!pinkExists())
+                    {
+                        pressAmt = 20;
+                        if (notAnnounced)
+                        {
+                            notAnnounced = false;
+                            Debug.LogFormat("[Pow #{0}] Minutes remaining is no longer a multiple of 5 and all pink layers of pieces are destroyed! Can destroy grey layers of pieces with no restriction!", moduleId);
+                        }
+                    }
+                    else
+                    {
+                        if (backSel == 0 && clockSel == 0)
+                        {
+                            pressAmt = 4;
+                        }
+                        else if (backSel == 1 && clockSel == 0)
+                        {
+                            pressAmt = 2;
+                        }
+                        else if (backSel == 0 && clockSel == 1)
+                        {
+                            pressAmt = 2;
+                        }
+                        else if (backSel == 1 && clockSel == 1)
+                        {
+                            pressAmt = 3;
+                        }
+                    }
+                }
+                if (storedMins % 3 != 0)
+                {
+                    haveToGrey = false;
                 }
             }
-            if (storedMins % 3 != 0)
+            if (storedMins == 0 && (int)bomb.GetTime() <= 30 && pressAmt != 20)
             {
-                haveToGrey = false;
+                pressAmt = 20;
+                Debug.LogFormat("[Pow #{0}] 30 seconds remaining! There is no longer a destruction limit!", moduleId);
             }
-        }
-        if (storedMins == 0 && (int)bomb.GetTime() <= 30 && pressAmt != 20)
-        {
-            pressAmt = 20;
-            Debug.LogFormat("[Pow #{0}] 30 seconds remaining! There is no longer a destruction limit!", moduleId);
-        }
-        else if (storedMins == 0 && (int)bomb.GetTime() > 30 && pressAmt == 20)
-        {
-            if (backSel == 0 && clockSel == 0)
+            else if (storedMins == 0 && (int)bomb.GetTime() > 30 && pressAmt != 20)
             {
-                pressAmt = 4;
-            }
-            else if (backSel == 1 && clockSel == 0)
-            {
-                pressAmt = 2;
-            }
-            else if (backSel == 0 && clockSel == 1)
-            {
-                pressAmt = 2;
-            }
-            else if (backSel == 1 && clockSel == 1)
-            {
-                pressAmt = 3;
+                if (backSel == 0 && clockSel == 0)
+                {
+                    pressAmt = 4;
+                }
+                else if (backSel == 1 && clockSel == 0)
+                {
+                    pressAmt = 2;
+                }
+                else if (backSel == 0 && clockSel == 1)
+                {
+                    pressAmt = 2;
+                }
+                else if (backSel == 1 && clockSel == 1)
+                {
+                    pressAmt = 3;
+                }
             }
         }
     }
