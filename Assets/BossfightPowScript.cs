@@ -81,11 +81,6 @@ public class BossfightPowScript : MonoBehaviour
         bossID = bossCount++;
         moduleId = moduleIdCounter++;
         moduleSolved = false;
-        float scalar = transform.lossyScale.x;
-        foreach (Light l in finishedObjsLights)
-        {
-            l.range *= scalar;
-        }
         foreach (KMSelectable obj in pinks)
         {
             KMSelectable pressed = obj;
@@ -107,6 +102,11 @@ public class BossfightPowScript : MonoBehaviour
 
     void Start()
     {
+        float scalar = transform.lossyScale.x;
+        foreach (Light l in finishedObjsLights)
+        {
+            l.range *= scalar;
+        }
         for (int i = 0; i < sets.Length; i++)
         {
             grayObjs[i].SetActive(false);
