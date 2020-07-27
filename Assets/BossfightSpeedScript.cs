@@ -13,7 +13,9 @@ public class BossfightSpeedScript : MonoBehaviour {
     public AudioSource music;
 
     public KMSelectable[] buttons;
+    public GameObject[] pieceScalers;
     public GameObject core;
+    public GameObject boss;
 
     static int bossCount = 1;
     static int moduleIdCounter = 1;
@@ -55,6 +57,8 @@ public class BossfightSpeedScript : MonoBehaviour {
         }
         StartCoroutine(rotCore());
         StartCoroutine(scaleCore());
+        StartCoroutine(scalePieces());
+        StartCoroutine(bossMoves());
     }
 
     void PressButton(KMSelectable pressed)
@@ -114,11 +118,60 @@ public class BossfightSpeedScript : MonoBehaviour {
         StartCoroutine(scaleCore());
     }
 
+    private IEnumerator bossMoves()
+    {
+        float t = 0f;
+        float offset = 0.6f;
+        while (t < 1f)
+        {
+            boss.transform.localPosition = Vector3.Lerp(new Vector3(0f, 0.07f, 0f), new Vector3(0f, 0.07f, 0.01f), t);
+            if (t < 0.2f && offset < 1f)
+            {
+                offset += 0.02f;
+            }
+            t += Time.deltaTime * offset;
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.12f);
+        t = 0f;
+        while (t < 1f)
+        {
+            boss.transform.localPosition = Vector3.Lerp(new Vector3(0f, 0.07f, 0.01f), new Vector3(0f, 0.07f, 0f), t);
+            if (t > 0.8f && offset > 0.6f)
+            {
+                offset -= 0.02f;
+            }
+            t += Time.deltaTime * offset;
+            yield return null;
+        }
+        StartCoroutine(bossMoves());
+    }
+
+    private IEnumerator scalePieces()
+    {
+        int scale = 0;
+        while (scale != 40)
+        {
+            pieceScalers[0].transform.localScale += new Vector3(0.01f, 0f, -0.01f);
+            pieceScalers[1].transform.localScale += new Vector3(-0.01f, 0f, 0.01f);
+            yield return new WaitForSeconds(0.025f);
+            scale++;
+        }
+        scale = 0;
+        while (scale != 40)
+        {
+            pieceScalers[0].transform.localScale += new Vector3(-0.01f, 0f, 0.01f);
+            pieceScalers[1].transform.localScale += new Vector3(0.01f, 0f, -0.01f);
+            yield return new WaitForSeconds(0.025f);
+            scale++;
+        }
+        StartCoroutine(scalePieces());
+    }
+
     //twitch plays
     #pragma warning disable 414
     private readonly string TwitchHelpMessage = @"!{0} something [Does something]";
     #pragma warning restore 414
-
     IEnumerator ProcessTwitchCommand(string command)
     {
         if (Regex.IsMatch(command, @"^\s*something\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))

@@ -287,11 +287,11 @@ public class BossfightPowScript : MonoBehaviour
             if (pinks.Contains(pressed))
             {
                 pressed.AddInteractionPunch();
+                if (!firstPunch)
+                    firstPunch = true;
                 if (pressCt != pressAmt && !haveToGrey)
                 {
                     audio.PlaySoundAtTransform("POWBREAK", pressed.transform);
-                    if (!firstPunch)
-                        firstPunch = true;
                     pressCt++;
                     pinkPresses[Array.IndexOf(pinks, pressed)] = true;
                     pinkObjs[Array.IndexOf(pinks, pressed)].SetActive(false);
@@ -483,7 +483,7 @@ public class BossfightPowScript : MonoBehaviour
                 tempscale.x = tempscale.x + 0.00085f;
                 tempscale.y = tempscale.y + 0.00085f;
                 background.material.SetTextureScale("_MainTex", tempscale);
-                yield return new WaitForSecondsRealtime(0.01f);
+                yield return new WaitForSeconds(0.01f);
             }
         }
         else if (tempscale.x < rando && tempscale.y > rando2)
@@ -494,7 +494,7 @@ public class BossfightPowScript : MonoBehaviour
                 tempscale.x = tempscale.x + 0.00085f;
                 tempscale.y = tempscale.y - 0.00085f;
                 background.material.SetTextureScale("_MainTex", tempscale);
-                yield return new WaitForSecondsRealtime(0.01f);
+                yield return new WaitForSeconds(0.01f);
             }
         }
         else if (tempscale.x > rando && tempscale.y < rando2)
@@ -505,7 +505,7 @@ public class BossfightPowScript : MonoBehaviour
                 tempscale.x = tempscale.x - 0.00085f;
                 tempscale.y = tempscale.y + 0.00085f;
                 background.material.SetTextureScale("_MainTex", tempscale);
-                yield return new WaitForSecondsRealtime(0.01f);
+                yield return new WaitForSeconds(0.01f);
             }
         }
         else if (tempscale.x > rando && tempscale.y > rando2)
@@ -516,7 +516,7 @@ public class BossfightPowScript : MonoBehaviour
                 tempscale.x = tempscale.x - 0.00085f;
                 tempscale.y = tempscale.y - 0.00085f;
                 background.material.SetTextureScale("_MainTex", tempscale);
-                yield return new WaitForSecondsRealtime(0.01f);
+                yield return new WaitForSeconds(0.01f);
             }
         }
         StartCoroutine(randomMoves());
@@ -567,7 +567,7 @@ public class BossfightPowScript : MonoBehaviour
         int rotation = 0;
         while (rotation != 90)
         {
-            yield return new WaitForSecondsRealtime(0.007f);
+            yield return new WaitForSeconds(0.007f);
             pinkCubesTrans[cube].Rotate(2f, 0.0f, 0.0f, Space.Self);
             rotation++;
         }
@@ -581,7 +581,7 @@ public class BossfightPowScript : MonoBehaviour
         int rotation = 0;
         while (rotation != 90)
         {
-            yield return new WaitForSecondsRealtime(0.007f);
+            yield return new WaitForSeconds(0.007f);
             grayCubesTrans[cube].Rotate(-2f, 0.0f, 0.0f, Space.Self);
             fakeGrayCubesTrans[cube].Rotate(-2f, 0.0f, 0.0f, Space.Self);
             rotation++;
@@ -596,7 +596,7 @@ public class BossfightPowScript : MonoBehaviour
         int rotation = 0;
         while (rotation != 90)
         {
-            yield return new WaitForSecondsRealtime(0.007f);
+            yield return new WaitForSeconds(0.007f);
             crystalOuterRotators[cube].transform.Rotate(0.0f, 0.0f, -1f, Space.Self);
             rotation++;
         }
@@ -618,14 +618,14 @@ public class BossfightPowScript : MonoBehaviour
             if (circleSizes[set] < 0.07f)
                 circleSizes[set] += 0.00005f;
             ct++;
-            yield return new WaitForSecondsRealtime(0.0001f);
+            yield return new WaitForSeconds(0.0001f);
         }
         while (circleSizes[set] > 0f)
         {
             Vector3 newPos = new Vector3(Mathf.Sin(Time.time * circleSpeeds[set] - offset) * circleSizes[set], 0.03f, Mathf.Cos(Time.time * circleSpeeds[set] - offset) * circleSizes[set]);
             sets[set].transform.localPosition = newPos;
             circleSizes[set] -= 0.00005f;
-            yield return new WaitForSecondsRealtime(0.0001f);
+            yield return new WaitForSeconds(0.0001f);
         }
         while (!allInitial()) { yield return null; }
         if (set == 0)
@@ -690,9 +690,9 @@ public class BossfightPowScript : MonoBehaviour
             {
                 sets[i].transform.localPosition = Vector3.Lerp(new Vector3(0f, 0.03f, 0f), attackPos[i], t);
                 crystalRotators[i].transform.localEulerAngles = Vector3.Lerp(new Vector3(0f, 0f, 0f), new Vector3(33.5f, 0f, 0f), t);
-                t += Time.deltaTime * 0.62f;
-                yield return null;
             }
+            t += Time.deltaTime * 0.62f;
+            yield return null;
         }
         for (int i = 0; i < sets.Length; i++)
         {
@@ -759,21 +759,21 @@ public class BossfightPowScript : MonoBehaviour
         audio.PlaySoundAtTransform("POWTRANSITION", transform);
         if (twitchMode && !solving)
         {
-            tpAPI["ircConnectionSendMessage"] = "Module " + GetModuleCode() + " (Pow) has exited the attack phase!";
+            tpAPI["ircConnectionSendMessage"] = "Module " + GetModuleCode() + " (Pow) has exited its attack phase!";
         }
         t = 0f;
         while (!allInitial() && t < 2f)
         {
+            pivots[0].transform.localPosition = Vector3.Lerp(new Vector3(-0.05f, 0.021f, -0.06f), new Vector3(-0.05f, 0.006f, -0.06f), t);
+            pivots[1].transform.localPosition = Vector3.Lerp(new Vector3(0f, 0.021f, -0.06f), new Vector3(0f, 0.006f, -0.06f), t);
+            pivots[2].transform.localPosition = Vector3.Lerp(new Vector3(0.05f, 0.021f, -0.06f), new Vector3(0.05f, 0.006f, -0.06f), t);
             for (int i = 0; i < sets.Length; i++)
             {
-                pivots[0].transform.localPosition = Vector3.Lerp(new Vector3(-0.05f, 0.021f, -0.06f), new Vector3(-0.05f, 0.006f, -0.06f), t);
-                pivots[1].transform.localPosition = Vector3.Lerp(new Vector3(0f, 0.021f, -0.06f), new Vector3(0f, 0.006f, -0.06f), t);
-                pivots[2].transform.localPosition = Vector3.Lerp(new Vector3(0.05f, 0.021f, -0.06f), new Vector3(0.05f, 0.006f, -0.06f), t);
                 sets[i].transform.localPosition = Vector3.Lerp(attackPos[i], new Vector3(0f, 0.03f, 0f), t);
                 crystalRotators[i].transform.localEulerAngles = Vector3.Lerp(new Vector3(33.5f, 0f, 0f), new Vector3(0f, 0f, 0f), t);
-                t += Time.deltaTime * 0.62f;
-                yield return null;
             }
+            t += Time.deltaTime * 0.62f;
+            yield return null;
         }
         pressCt = 0;
         for (int i = 0; i < 3; i++)
@@ -825,7 +825,7 @@ public class BossfightPowScript : MonoBehaviour
             finishMove = UnityEngine.Random.Range(-0.075f, 0.075f);
             finishMove2 = UnityEngine.Random.Range(-0.075f, 0.075f);
             StartCoroutine(throwDir(i, finishMove, finishMove2));
-            yield return new WaitForSecondsRealtime(0.1f);
+            yield return new WaitForSeconds(0.1f);
         }
     }
 
@@ -928,6 +928,10 @@ public class BossfightPowScript : MonoBehaviour
                     else if (grayObjs[temp - 1].activeSelf)
                     {
                         grays[temp - 1].OnInteract();
+                        if (allDestroyed())
+                        {
+                            yield return "solve";
+                        }
                     }
                     yield return new WaitForSeconds(0.1f);
                 }
@@ -949,6 +953,10 @@ public class BossfightPowScript : MonoBehaviour
                     else if (grayObjs[temp - 1].activeSelf)
                     {
                         grays[temp - 1].OnInteract();
+                        if (allDestroyed())
+                        {
+                            yield return "solve";
+                        }
                     }
                     else
                     {
