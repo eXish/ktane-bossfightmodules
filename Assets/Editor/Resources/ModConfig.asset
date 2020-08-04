@@ -31,13 +31,13 @@ MonoBehaviour:
     Coming soon...
 
 
-    Pow (powModule) v1.1.5
+    Pow (powModule) v1.1.6
 
     Speed (speedModule) unreleased
 
     Modules and Concepts by eXish
 
     Twitch Plays supported'
-  version: 1.1.5
+  version: 1.1.6
   outputFolder: build
   previewImage: {fileID: 2800000, guid: cf8194f137dcb0b438aa5a904141bc1f, type: 3}

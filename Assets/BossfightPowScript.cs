@@ -53,7 +53,7 @@ public class BossfightPowScript : MonoBehaviour
     private int pressAmt = -1;
     private int storedMins = -1;
     private bool haveToGrey = false;
-    private bool firstPunch = false;
+    private bool firstCycle = false;
 
     private int backSel = -1;
     private int clockSel = -1;
@@ -287,8 +287,6 @@ public class BossfightPowScript : MonoBehaviour
             if (pinks.Contains(pressed))
             {
                 pressed.AddInteractionPunch();
-                if (!firstPunch)
-                    firstPunch = true;
                 if (pressCt != pressAmt && !haveToGrey)
                 {
                     audio.PlaySoundAtTransform("POWBREAK", pressed.transform);
@@ -534,7 +532,7 @@ public class BossfightPowScript : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
         while (!allInitial()) { yield return new WaitForSeconds(0.1f); }
-        randomTime = UnityEngine.Random.Range(3750, 4751);
+        randomTime = UnityEngine.Random.Range(10000, 11001);
         //for debugging randomTime = UnityEngine.Random.Range(100, 501);
         for (int i = 0; i < sets.Length; i++)
         {
@@ -611,7 +609,7 @@ public class BossfightPowScript : MonoBehaviour
         float offset = getFloat(set);
         if (clockSel == 0)
             offset = -offset;
-        while (ct < randomTime || !firstPunch)
+        while (ct < randomTime)
         {
             Vector3 newPos = new Vector3(Mathf.Sin(Time.time * circleSpeeds[set] - offset) * circleSizes[set], 0.03f, Mathf.Cos(Time.time * circleSpeeds[set] - offset) * circleSizes[set]);
             sets[set].transform.localPosition = newPos;
@@ -829,7 +827,7 @@ public class BossfightPowScript : MonoBehaviour
         }
     }
 
-    // Spreads a pieces in a specified direction
+    // Spreads a piece in a specified direction
     private IEnumerator throwDir(int num, float x, float z)
     {
         float t = 0f;
