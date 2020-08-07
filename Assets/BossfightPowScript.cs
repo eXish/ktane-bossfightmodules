@@ -53,7 +53,7 @@ public class BossfightPowScript : MonoBehaviour
     private int pressAmt = -1;
     private int storedMins = -1;
     private bool haveToGrey = false;
-    private bool firstCycle = false;
+    private bool firstPunch = false;
 
     private int backSel = -1;
     private int clockSel = -1;
@@ -287,6 +287,11 @@ public class BossfightPowScript : MonoBehaviour
             if (pinks.Contains(pressed))
             {
                 pressed.AddInteractionPunch();
+                if (!firstPunch)
+                {
+                    firstPunch = true;
+                    randomTime -= 6000;
+                }
                 if (pressCt != pressAmt && !haveToGrey)
                 {
                     audio.PlaySoundAtTransform("POWBREAK", pressed.transform);
