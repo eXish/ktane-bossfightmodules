@@ -623,6 +623,10 @@ public class BossfightPowScript : MonoBehaviour
             ct++;
             yield return new WaitForSeconds(0.0001f);
         }
+        if (!firstPunch)
+        {
+            firstPunch = true;
+        }
         while (circleSizes[set] > 0f)
         {
             Vector3 newPos = new Vector3(Mathf.Sin(Time.time * circleSpeeds[set] - offset) * circleSizes[set], 0.03f, Mathf.Cos(Time.time * circleSpeeds[set] - offset) * circleSizes[set]);
