@@ -656,6 +656,7 @@ public class BossfightPowScript : MonoBehaviour
                             fakeGrayObjs[j].SetActive(true);
                         }
                     }
+                    attacking = true;
                     StartCoroutine(attackMode());
                     yield break;
                 }
@@ -668,7 +669,6 @@ public class BossfightPowScript : MonoBehaviour
     // Starts the bosses attack mode
     private IEnumerator attackMode()
     {
-        attacking = true;
         audio.PlaySoundAtTransform("POWTRANSITION", transform);
         pivotpos = UnityEngine.Random.Range(0, 3);
         if (twitchMode && !solving)
