@@ -70,6 +70,8 @@ public class BossfightPowScript : MonoBehaviour
     private bool notAnnounced = false;
     private bool notAnnounced2 = true;
 
+    private PowSettings Settings = new PowSettings();
+
     static int bossCount = 1;
     static int moduleIdCounter = 1;
     int moduleId;
@@ -78,6 +80,11 @@ public class BossfightPowScript : MonoBehaviour
 
     void Awake()
     {
+        ModConfig<PowSettings> modConfig = new ModConfig<PowSettings>("PowSettings");
+        //Read from the settings file, or create one if one doesn't exist
+        Settings = modConfig.Settings;
+        //Update the settings file incase there was an error during read
+        modConfig.Settings = Settings;
         bossID = bossCount++;
         moduleId = moduleIdCounter++;
         moduleSolved = false;
@@ -97,7 +104,7 @@ public class BossfightPowScript : MonoBehaviour
             pressed.OnInteract += delegate () { PressButton(pressed); return false; };
         }
         GetComponent<KMBombModule>().OnActivate += OnActivate;
-        bomb.OnBombExploded += delegate () { bossCount = 1; if (bossID == 1) music.Stop(); };
+        bomb.OnBombExploded += delegate () { bossCount = 1; if (bossID == 1 && music.isPlaying) music.Stop(); };
     }
 
     void Start()
@@ -148,7 +155,7 @@ public class BossfightPowScript : MonoBehaviour
 
     void Update()
     {
-        if (bossCount == 1 && moduleSolved)
+        if (bossCount == 1 && music.isPlaying && moduleSolved)
         {
             music.Stop();
         }
@@ -272,7 +279,7 @@ public class BossfightPowScript : MonoBehaviour
             else
                 twitchMode = false;
         }
-        if (bossID == 1)
+        if (bossID == 1 && !Settings.disableMusic)
         {
             music.Play();
         }
@@ -861,10 +868,26 @@ public class BossfightPowScript : MonoBehaviour
 
     // Deals with TP command handling
     #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in an attack phase] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in an attack phase] | Valid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | On TP the module will announce in chat when the boss enters an attack phase and which LED it will attack next | Time between attacks in an attack phase are slightly longer on TP";
+    private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in an attack phase] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in an attack phase] | !{0} togglemusic [Toggles the module's music]\nValid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | On TP the module will announce in chat when the boss enters an attack phase and which LED it will attack next | Time between attacks in an attack phase are slightly longer on TP";
     #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
+        if (Regex.IsMatch(command, @"^\s*togglemusic\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            yield return null;
+            if (bossID == 1)
+            {
+                if (music.isPlaying)
+                    music.Stop();
+                else
+                    music.Play();
+            }
+            else
+            {
+                yield return "sendtochaterror This Pow module is not playing the custom music!";
+            }
+            yield break;
+        }
         string[] parameters = command.Split(' ');
         if (Regex.IsMatch(parameters[0], @"^\s*led\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
@@ -1072,4 +1095,25 @@ public class BossfightPowScript : MonoBehaviour
 
         return closest != null ? closest.Find("MultiDeckerUI").Find("IDText").GetComponent<UnityEngine.UI.Text>().text : null;
     }
+
+    class PowSettings
+    {
+        public bool disableMusic = false;
+    }
+
+    static Dictionary<string, object>[] TweaksEditorSettings = new Dictionary<string, object>[]
+    {
+        new Dictionary<string, object>
+        {
+            { "Filename", "PowSettings.json" },
+            { "Name", "Pow Settings" },
+            { "Listing", new List<Dictionary<string, object>>{
+                new Dictionary<string, object>
+                {
+                    { "Key", "disableMusic" },
+                    { "Text", "Disables the custom music normally played by the module" }
+                },
+            } }
+        }
+    };
 }
