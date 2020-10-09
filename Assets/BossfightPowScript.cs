@@ -543,7 +543,7 @@ public class BossfightPowScript : MonoBehaviour
                 StartCoroutine(introThrow(i));
             yield return new WaitForSeconds(0.1f);
         }
-        while (!allInitial()) { yield return new WaitForSeconds(0.1f); }
+        while (!allInitial()) { yield return null; }
         randomTime = UnityEngine.Random.Range(10000, 11001);
         //for debugging randomTime = UnityEngine.Random.Range(100, 501);
         for (int i = 0; i < sets.Length; i++)
@@ -646,31 +646,40 @@ public class BossfightPowScript : MonoBehaviour
         {
             //for debugging randomTime = UnityEngine.Random.Range(100, 501);
             randomTime = UnityEngine.Random.Range(4000, 5001);
-            for (int i = 0; i < sets.Length; i++)
+            if (!pinkExists())
             {
-                if (pinkObjs[i].activeSelf)
+                for (int i = 0; i < sets.Length; i++)
                 {
-                    for (int j = 0; j < sets.Length; j++)
+                    StartCoroutine(setCircling(i));
+                    yield return new WaitForSeconds(0.5f);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < sets.Length; i++)
+                {
+                    if (pinkObjs[i].activeSelf)
                     {
-                        if (pinkObjs[j].activeSelf)
+                        for (int j = 0; j < sets.Length; j++)
                         {
-                            pinkObjs[j].SetActive(false);
-                            crystalObjs[j].SetActive(true);
+                            if (pinkObjs[j].activeSelf)
+                            {
+                                pinkObjs[j].SetActive(false);
+                                crystalObjs[j].SetActive(true);
+                            }
+                            else if (grayObjs[j].activeSelf)
+                            {
+                                grayObjs[j].SetActive(false);
+                                fakeGrayObjs[j].SetActive(true);
+                            }
                         }
-                        else if (grayObjs[j].activeSelf)
-                        {
-                            grayObjs[j].SetActive(false);
-                            fakeGrayObjs[j].SetActive(true);
-                        }
+                        attacking = true;
+                        StartCoroutine(attackMode());
+                        yield break;
                     }
-                    attacking = true;
-                    StartCoroutine(attackMode());
-                    yield break;
                 }
             }
         }
-        if (!attacking)
-            StartCoroutine(setCircling(set));
     }
 
     // Starts the bosses attack mode
@@ -868,7 +877,7 @@ public class BossfightPowScript : MonoBehaviour
 
     // Deals with TP command handling
     #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in an attack phase] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in an attack phase] | !{0} togglemusic [Toggles the module's music]\nValid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | On TP the module will announce in chat when the boss enters an attack phase and which LED it will attack next | Time between attacks in an attack phase are slightly longer on TP";
+    private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in an attack phase] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in an attack phase] | !{0} togglemusic [Toggles the module's music]\n"+"Valid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | On TP the module will announce in chat when the boss enters an attack phase and which LED it will attack next | Time between attacks in an attack phase are slightly longer on TP";
     #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
