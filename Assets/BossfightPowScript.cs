@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using KModkit;
 using System.Text.RegularExpressions;
 using System;
 
@@ -877,7 +876,7 @@ public class BossfightPowScript : MonoBehaviour
 
     // Deals with TP command handling
     #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in an attack phase] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in an attack phase] | !{0} togglemusic [Toggles the module's music]\n"+"Valid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | On TP the module will announce in chat when the boss enters an attack phase and which LED it will attack next | Time between attacks in an attack phase are slightly longer on TP";
+    private readonly string TwitchHelpMessage = @"!{0} led <#> [Presses the specified LED when the boss is in an attack phase] | !{0} press <p1> (p2)... [Presses the piece(s) 'p1' (and optionally 'p2' or more) of the boss when it is not in an attack phase] | !{0} togglemusic [Toggles the module's music] | Valid pieces are 1-10 where 1 is the front and 10 is the back of the boss | Valid LEDs are 1-3 with 1 being leftmost and 3 being rightmost | On TP the module will announce in chat when the boss enters an attack phase and which LED it will attack next | Time between attacks in an attack phase are slightly longer on TP";
     #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
@@ -886,10 +885,10 @@ public class BossfightPowScript : MonoBehaviour
             yield return null;
             if (bossID == 1)
             {
-                if (music.isPlaying)
-                    music.Stop();
+                if (music.volume == 0.15f)
+                    music.volume = 0f;
                 else
-                    music.Play();
+                    music.volume = 0.15f;
             }
             else
             {
