@@ -154,6 +154,7 @@ public class BossfightSpeedScript : MonoBehaviour {
         {
             pieceScalers[0].transform.localScale += new Vector3(0.01f, 0f, -0.01f);
             pieceScalers[1].transform.localScale += new Vector3(-0.01f, 0f, 0.01f);
+            pieceScalers[2].transform.localScale += new Vector3(-0.001f, 0.001f, 0f);
             yield return new WaitForSeconds(0.025f);
             scale++;
         }
@@ -162,6 +163,7 @@ public class BossfightSpeedScript : MonoBehaviour {
         {
             pieceScalers[0].transform.localScale += new Vector3(-0.01f, 0f, 0.01f);
             pieceScalers[1].transform.localScale += new Vector3(0.01f, 0f, -0.01f);
+            pieceScalers[2].transform.localScale += new Vector3(0.001f, -0.001f, 0f);
             yield return new WaitForSeconds(0.025f);
             scale++;
         }

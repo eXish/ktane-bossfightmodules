@@ -243,6 +243,7 @@ public class BossfightPowScript : MonoBehaviour
             if (storedMins == 0 && (int)bomb.GetTime() <= 30 && pressAmt != 20)
             {
                 pressAmt = 20;
+                haveToGrey = false;
                 Debug.LogFormat("[Pow #{0}] 30 seconds remaining! There is no longer a destruction limit!", moduleId);
             }
             else if (storedMins == 0 && (int)bomb.GetTime() > 30 && pressAmt != 20)
@@ -484,6 +485,7 @@ public class BossfightPowScript : MonoBehaviour
         float rando = UnityEngine.Random.Range(0.5f, 2f);
         float rando2 = UnityEngine.Random.Range(0.5f, 2f);
         Vector2 tempscale = background.material.GetTextureScale("_MainTex");
+        float t = 0f;
         if (tempscale.x < rando && tempscale.y < rando2)
         {
             while (tempscale.x < rando && tempscale.y < rando2)
@@ -492,7 +494,12 @@ public class BossfightPowScript : MonoBehaviour
                 tempscale.x = tempscale.x + 0.00085f;
                 tempscale.y = tempscale.y + 0.00085f;
                 background.material.SetTextureScale("_MainTex", tempscale);
-                yield return new WaitForSeconds(0.01f);
+                while (t < 0.01f)
+                {
+                    yield return null;
+                    t += Time.deltaTime;
+                }
+                t = 0f;
             }
         }
         else if (tempscale.x < rando && tempscale.y > rando2)
@@ -503,7 +510,12 @@ public class BossfightPowScript : MonoBehaviour
                 tempscale.x = tempscale.x + 0.00085f;
                 tempscale.y = tempscale.y - 0.00085f;
                 background.material.SetTextureScale("_MainTex", tempscale);
-                yield return new WaitForSeconds(0.01f);
+                while (t < 0.01f)
+                {
+                    yield return null;
+                    t += Time.deltaTime;
+                }
+                t = 0f;
             }
         }
         else if (tempscale.x > rando && tempscale.y < rando2)
@@ -514,7 +526,12 @@ public class BossfightPowScript : MonoBehaviour
                 tempscale.x = tempscale.x - 0.00085f;
                 tempscale.y = tempscale.y + 0.00085f;
                 background.material.SetTextureScale("_MainTex", tempscale);
-                yield return new WaitForSeconds(0.01f);
+                while (t < 0.01f)
+                {
+                    yield return null;
+                    t += Time.deltaTime;
+                }
+                t = 0f;
             }
         }
         else if (tempscale.x > rando && tempscale.y > rando2)
@@ -525,7 +542,12 @@ public class BossfightPowScript : MonoBehaviour
                 tempscale.x = tempscale.x - 0.00085f;
                 tempscale.y = tempscale.y - 0.00085f;
                 background.material.SetTextureScale("_MainTex", tempscale);
-                yield return new WaitForSeconds(0.01f);
+                while (t < 0.01f)
+                {
+                    yield return null;
+                    t += Time.deltaTime;
+                }
+                t = 0f;
             }
         }
         StartCoroutine(randomMoves());
@@ -534,13 +556,19 @@ public class BossfightPowScript : MonoBehaviour
     // Intro sequence: Delays the cube rotations so they start one after another, plays intro anim, and then starts the boss (set) movement(s)
     private IEnumerator startIntro()
     {
+        float t = 0f;
         for (int i = 0; i < sets.Length; i++)
         {
             StartCoroutine(rotPCube(i));
             StartCoroutine(rotGCube(i));
             if (i > 0)
                 StartCoroutine(introThrow(i));
-            yield return new WaitForSeconds(0.1f);
+            while (t < 0.1f)
+            {
+                yield return null;
+                t += Time.deltaTime;
+            }
+            t = 0f;
         }
         while (!allInitial()) { yield return null; }
         randomTime = UnityEngine.Random.Range(10000, 11001);
@@ -553,7 +581,12 @@ public class BossfightPowScript : MonoBehaviour
             else
                 circleSpeeds.Add(-1.5f);
             StartCoroutine(setCircling(i));
-            yield return new WaitForSeconds(0.5f);
+            while (t < 0.5f)
+            {
+                yield return null;
+                t += Time.deltaTime;
+            }
+            t = 0f;
         }
     }
 
@@ -573,43 +606,73 @@ public class BossfightPowScript : MonoBehaviour
     // Rotates the specified pink cube in a loop
     private IEnumerator rotPCube(int cube)
     {
+        float t = 0f;
         int rotation = 0;
         while (rotation != 90)
         {
-            yield return new WaitForSeconds(0.007f);
+            while (t < 0.007f)
+            {
+                yield return null;
+                t += Time.deltaTime;
+            }
+            t = 0f;
             pinkCubesTrans[cube].Rotate(2f, 0.0f, 0.0f, Space.Self);
             rotation++;
         }
-        yield return new WaitForSeconds(0.1f);
+        while (t < 0.1f)
+        {
+            yield return null;
+            t += Time.deltaTime;
+        }
         StartCoroutine(rotPCube(cube));
     }
 
     // Rotates the specified gray cube in a loop
     private IEnumerator rotGCube(int cube)
     {
+        float t = 0f;
         int rotation = 0;
         while (rotation != 90)
         {
-            yield return new WaitForSeconds(0.007f);
+            while (t < 0.007f)
+            {
+                yield return null;
+                t += Time.deltaTime;
+            }
+            t = 0f;
             grayCubesTrans[cube].Rotate(-2f, 0.0f, 0.0f, Space.Self);
             fakeGrayCubesTrans[cube].Rotate(-2f, 0.0f, 0.0f, Space.Self);
             rotation++;
         }
-        yield return new WaitForSeconds(0.1f);
+        while (t < 0.1f)
+        {
+            yield return null;
+            t += Time.deltaTime;
+        }
         StartCoroutine(rotGCube(cube));
     }
 
     // Rotates the specified crystal in a loop
     private IEnumerator rotCrystal(int cube)
     {
+        float t = 0f;
         int rotation = 0;
         while (rotation != 90)
         {
-            yield return new WaitForSeconds(0.007f);
+            while (t < 0.007f)
+            {
+                yield return null;
+                t += Time.deltaTime;
+            }
+            t = 0f;
             crystalOuterRotators[cube].transform.Rotate(0.0f, 0.0f, -1f, Space.Self);
             rotation++;
         }
-        yield return new WaitForSeconds(0.1f);
+        while (t < 0.1f)
+        {
+            yield return null;
+            t += Time.deltaTime;
+        }
         crystalCoroutines[cube] = StartCoroutine(rotCrystal(cube));
     }
 
@@ -617,6 +680,7 @@ public class BossfightPowScript : MonoBehaviour
     private IEnumerator setCircling(int set)
     {
         int ct = 0;
+        float t = 0f;
         float offset = getFloat(set);
         if (clockSel == 0)
             offset = -offset;
@@ -627,7 +691,12 @@ public class BossfightPowScript : MonoBehaviour
             if (circleSizes[set] < 0.07f)
                 circleSizes[set] += 0.00005f;
             ct++;
-            yield return new WaitForSeconds(0.0001f);
+            while (t < 0.0001f)
+            {
+                yield return null;
+                t += Time.deltaTime;
+            }
+            t = 0f;
         }
         if (!firstPunch)
         {
@@ -638,7 +707,12 @@ public class BossfightPowScript : MonoBehaviour
             Vector3 newPos = new Vector3(Mathf.Sin(Time.time * circleSpeeds[set] - offset) * circleSizes[set], 0.03f, Mathf.Cos(Time.time * circleSpeeds[set] - offset) * circleSizes[set]);
             sets[set].transform.localPosition = newPos;
             circleSizes[set] -= 0.00005f;
-            yield return new WaitForSeconds(0.0001f);
+            while (t < 0.0001f)
+            {
+                yield return null;
+                t += Time.deltaTime;
+            }
+            t = 0f;
         }
         while (!allInitial()) { yield return null; }
         if (set == 0)
@@ -650,7 +724,12 @@ public class BossfightPowScript : MonoBehaviour
                 for (int i = 0; i < sets.Length; i++)
                 {
                     StartCoroutine(setCircling(i));
-                    yield return new WaitForSeconds(0.5f);
+                    while (t < 0.5f)
+                    {
+                        yield return null;
+                        t += Time.deltaTime;
+                    }
+                    t = 0f;
                 }
             }
             else
@@ -736,6 +815,7 @@ public class BossfightPowScript : MonoBehaviour
         }
         for (int i = 0; i < sets.Length; i++)
         {
+            float timer = 0f;
             if (crystalObjs[i].activeSelf)
             {
                 nextPivot = UnityEngine.Random.Range(0, 3);
@@ -744,7 +824,11 @@ public class BossfightPowScript : MonoBehaviour
                 if (twitchMode && !solving)
                 {
                     tpAPI["ircConnectionSendMessage"] = "LED " + (nextPivot + 1) + " is about to be attacked on Module " + GetModuleCode() + " (Pow)!";
-                    yield return new WaitForSeconds(7f);
+                    while (timer < 7f)
+                    {
+                        yield return null;
+                        timer += Time.deltaTime;
+                    }
                 }
                 audio.PlaySoundAtTransform("POWATTACK", transform);
                 t = 0f;
@@ -816,10 +900,16 @@ public class BossfightPowScript : MonoBehaviour
             }
         }
         attacking = false;
+        float timer2 = 0f;
         for (int i = 0; i < sets.Length; i++)
         {
             StartCoroutine(setCircling(i));
-            yield return new WaitForSeconds(0.5f);
+            while (timer2 < 0.5f)
+            {
+                yield return null;
+                timer2 += Time.deltaTime;
+            }
+            timer2 = 0f;
         }
     }
 
@@ -842,12 +932,18 @@ public class BossfightPowScript : MonoBehaviour
     // Solving animation spread of pieces base
     private IEnumerator spread()
     {
+        float t = 0f;
         for (int i = 0; i < sets.Length; i++)
         {
             finishMove = UnityEngine.Random.Range(-0.075f, 0.075f);
             finishMove2 = UnityEngine.Random.Range(-0.075f, 0.075f);
             StartCoroutine(throwDir(i, finishMove, finishMove2));
-            yield return new WaitForSeconds(0.1f);
+            while (t < 0.1f)
+            {
+                yield return null;
+                t += Time.deltaTime;
+            }
+            t = 0f;
         }
     }
 
