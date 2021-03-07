@@ -815,7 +815,6 @@ public class BossfightPowScript : MonoBehaviour
         }
         for (int i = 0; i < sets.Length; i++)
         {
-            float timer = 0f;
             if (crystalObjs[i].activeSelf)
             {
                 nextPivot = UnityEngine.Random.Range(0, 3);
@@ -824,11 +823,7 @@ public class BossfightPowScript : MonoBehaviour
                 if (twitchMode && !solving)
                 {
                     tpAPI["ircConnectionSendMessage"] = "LED " + (nextPivot + 1) + " is about to be attacked on Module " + GetModuleCode() + " (Pow)!";
-                    while (timer < 7f)
-                    {
-                        yield return null;
-                        timer += Time.deltaTime;
-                    }
+                    yield return new WaitForSeconds(7f);
                 }
                 audio.PlaySoundAtTransform("POWATTACK", transform);
                 t = 0f;
@@ -900,16 +895,16 @@ public class BossfightPowScript : MonoBehaviour
             }
         }
         attacking = false;
-        float timer2 = 0f;
+        float timer = 0f;
         for (int i = 0; i < sets.Length; i++)
         {
             StartCoroutine(setCircling(i));
-            while (timer2 < 0.5f)
+            while (timer < 0.5f)
             {
                 yield return null;
-                timer2 += Time.deltaTime;
+                timer += Time.deltaTime;
             }
-            timer2 = 0f;
+            timer = 0f;
         }
     }
 
