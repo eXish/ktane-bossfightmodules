@@ -9259,7 +9259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ModuleType: powModule
   ModuleDisplayName: Pow
-  RequiresTimerVisibility: 0
+  RequiresTimerVisibility: 1
 --- !u!114 &114251166357046758
 MonoBehaviour:
   m_ObjectHideFlags: 1
