@@ -61,6 +61,7 @@ public class BossfightPowScript : MonoBehaviour
     private bool attacking = false;
     private int nextPivot = -1;
 
+    private float defaultGameMusicVolume;
     private float finishMove;
     private float finishMove2;
 
@@ -85,6 +86,12 @@ public class BossfightPowScript : MonoBehaviour
         //Update the settings file incase there was an error during read
         modConfig.Settings = Settings;
         bossID = bossCount++;
+        try
+        {
+            if (bossID == 1)
+                defaultGameMusicVolume = GameMusicControl.GameMusicVolume;
+        }
+        catch (Exception) { }
         moduleId = moduleIdCounter++;
         moduleSolved = false;
         foreach (KMSelectable obj in pinks)
@@ -103,7 +110,7 @@ public class BossfightPowScript : MonoBehaviour
             pressed.OnInteract += delegate () { PressButton(pressed); return false; };
         }
         GetComponent<KMBombModule>().OnActivate += OnActivate;
-        bomb.OnBombExploded += delegate () { bossCount = 1; if (bossID == 1 && music.isPlaying) music.Stop(); };
+        bomb.OnBombExploded += delegate () { bossCount = 1; if (bossID == 1 && music.isPlaying) { music.Stop(); try { GameMusicControl.GameMusicVolume = defaultGameMusicVolume; } catch (Exception) { } } };
     }
 
     void Start()
@@ -157,6 +164,7 @@ public class BossfightPowScript : MonoBehaviour
         if (bossCount == 1 && music.isPlaying && moduleSolved)
         {
             music.Stop();
+            try { GameMusicControl.GameMusicVolume = defaultGameMusicVolume; } catch (Exception) { }
         }
         if (!moduleSolved)
         {
@@ -282,6 +290,7 @@ public class BossfightPowScript : MonoBehaviour
         if (bossID == 1 && !Settings.disableMusic)
         {
             music.Play();
+            try { GameMusicControl.GameMusicVolume = 0.0f; } catch (Exception) { }
         }
         StartCoroutine(randomMoves());
         StartCoroutine(startIntro());
