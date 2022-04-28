@@ -159,6 +159,16 @@ public class BossfightPowScript : MonoBehaviour
         Debug.LogFormat("[Pow #{0}] The destruction limit is {1}.", moduleId, pressAmt);
     }
 
+    void OnDestroy()
+    {
+        bossCount = 1;
+        if (bossID == 1 && music.isPlaying)
+        {
+            music.Stop();
+            try { GameMusicControl.GameMusicVolume = defaultGameMusicVolume; } catch (Exception) { };
+        }
+    }
+
     void Update()
     {
         if (bossCount == 1 && music.isPlaying && moduleSolved)
