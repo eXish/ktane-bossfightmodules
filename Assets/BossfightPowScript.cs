@@ -1225,11 +1225,12 @@ public class BossfightPowScript : MonoBehaviour
         {
             { "Filename", "PowSettings.json" },
             { "Name", "Pow Settings" },
-            { "Listing", new List<Dictionary<string, object>>{
+            { "Listings", new List<Dictionary<string, object>>{
                 new Dictionary<string, object>
                 {
                     { "Key", "disableMusic" },
-                    { "Text", "Disables the custom music normally played by the module" }
+                    { "Text", "Disable Music" },
+                    { "Description", "Disables the custom music normally played by the module." }
                 },
             } }
         }
